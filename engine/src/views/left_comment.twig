@@ -1,0 +1,13 @@
+{% extends 'base.twig' %}
+
+{% block body %}
+    {% if error is not defined %}
+        <h3>You have successfully left a comment</h3>
+        <h4>Your changes will be submitted in 30 minutes</h4>
+    {% else %}
+        {{ error }}
+    {% endif %}
+    <div>
+        <a href="{{ path('_index_') }}">Back</a>
+    </div>
+{% endblock body %}

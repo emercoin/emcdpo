@@ -1,0 +1,12 @@
+{% extends 'base.twig' %}
+{% block body %}
+    {% if error is not defined %}
+        <h3>Congratulations! You have just activated a key.</h3>
+        <h4>You can authorize again in 30 minutes to leave your comment</h4>
+    {% else %}
+        {{ error }}
+    {% endif %}
+    <div>
+        <a href="{{ path('_index_') }}">Back</a>
+    </div>
+{% endblock %}

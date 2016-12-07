@@ -1,0 +1,13 @@
+{% extends 'base.twig' %}
+
+{% block body %}
+    <form autocomplete="off" enctype="application/x-www-form-urlencoded" method="get" action="{{ path('_index_') }}">
+        <fieldset>
+            <label>
+                Your secret key
+                <input type="text" name="key"/>
+            </label>
+            <button type="submit">Submit</button>
+        </fieldset>
+    </form>
+{% endblock body %}
