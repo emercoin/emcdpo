@@ -235,7 +235,7 @@ namespace Emercoin {
          */
         private function extractKeyValue()
         {
-            foreach (explode("\n", $this->key->value) as $row) {
+            foreach (explode("\n", utf8_decode($this->key->value)) as $row) {
                 @list($key, $value) = explode('=', $row, 2);
                 $this->data[$key] = $value;
             }
