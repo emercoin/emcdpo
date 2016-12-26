@@ -1,0 +1,113 @@
+{% extends 'base.twig' %}
+
+{% block body %}
+    {% if first_owner %}
+        {% if first_owner.getOwner()|length > 0 %}
+            <h3>This key has already been activated by {{ first_owner.owner }} at {{ first_owner.date }}</h3>
+        {% else %}
+            <h3>This key has already been activated at {{ first_owner.date }}</h3>
+        {% endif %}
+    {% else %}
+        <h3>This key is valid</h3>
+    {% endif %}
+
+    <strong>Vendor Details:</strong>
+    <table border="1">
+        <tbody>
+        <tr>
+            <th>Id</th>
+            <td>{{ EMERCOIN_DPO_VENDOR_ID }}</td>
+        </tr>
+        <tr>
+            <th>Item</th>
+            <td>{{ EMERCOIN_DPO_VENDOR.getName() }}</td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td>{{ EMERCOIN_DPO_VENDOR.getData()['name'] }}</td>
+        </tr>
+        </tbody>
+    </table>
+    <br>
+    <strong>Product Details:</strong>
+    <table border="1">
+        <tbody>
+        <tr>
+            <th>Serial</th>
+            <td>{{ global.request.get('key') }}</td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td>{{ key.name }}</td>
+        </tr>
+        {% for field,value in key.data %}
+            <tr>
+                <th>{{ field }}</th>
+                <td>{{ value }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    {% if key.hasOTP() and not key.hasSecret() %}
+        <form autocomplete="off" enctype="application/x-www-form-urlencoded" method="post"
+              action="{{ path('activation', {key: global.request.get('key')}) }}">
+            <fieldset>
+                <div>
+                    <label>
+                        Please enter your one time password
+                        <input type="password" name="otp" value="{{ global.request.get('otp') }}"/>
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        Please enter your password to get the entry
+                        <input type="password" name="password"/>
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        Please repeat your password
+                        <input type="password" name="password_repeat"/>
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        Kindly save your name
+                        <input type="text" name="owner"/>
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        Save your comment
+                        <textarea name="comment"></textarea>
+                    </label>
+                </div>
+                <button type="submit">Submit</button>
+            </fieldset>
+        </form>
+    {% elseif key.hasSecret() and key.secret|length > 0 and key.updated < ALLOWED_UPDATES %}
+        <form autocomplete="off" enctype="application/x-www-form-urlencoded" method="post"
+              action="{{ path('comment', {key: global.request.get('key') }) }}">
+            <fieldset>
+                <div><strong>That was you?</strong></div>
+                <div>
+                    <label>
+                        Authorize by your password:
+                        <input type="password" name="password"/>
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        To leave a comment:
+                        <textarea name="comment"></textarea>
+                    </label>
+                </div>
+                <button type="submit">Submit</button>
+            </fieldset>
+        </form>
+    {% endif %}
+    <div>
+        <a href="{{ path('_index_') }}">Back</a>
+    </div>
+{% endblock %}
