@@ -286,7 +286,7 @@ namespace Emercoin {
          */
         function isExpired()
         {
-            return !!$this->key->expired;
+            return $this->key->expires_in <= 0;
         }
 
         /**
