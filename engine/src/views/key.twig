@@ -22,10 +22,12 @@
             <th>Item</th>
             <td>{{ EMERCOIN_DPO_VENDOR.getName() }}</td>
         </tr>
+        {% for field,value in EMERCOIN_DPO_VENDOR.data %}
         <tr>
-            <th>Name</th>
-            <td>{{ EMERCOIN_DPO_VENDOR.getData()['name'] }}</td>
+            <th>{{ field }}</th>
+            <td>{{ value }}</td>
         </tr>
+        {% endfor %}
         </tbody>
     </table>
     <br>
