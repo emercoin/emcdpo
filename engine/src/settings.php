@@ -1,16 +1,16 @@
 <?php
-const DPO_VENDOR = 'Linux';
-const SALT = 'dhqhd9823yn8hqwihe9823ehqwh';
-const NVS_DAYS = 3650;
+const DPO_VENDOR = 'DPO VENDOR NAME';
+const SALT = 'SALT TO HASH PASSWORDS';
+const NVS_DAYS = 10;
 
 // http or https
 CONST RPC_TYPE = "https";
-CONST RPC_USERNAME = "emccoinrpc";
-CONST RPC_PASSWORD = "Ahc1AhchieSiu4UoheezuineeHeet6oiy1dai9Uigim2echahquefepeiseisah6";
-CONST RPC_HOST = "localhost";
+CONST RPC_USERNAME = "USENAME";
+CONST RPC_PASSWORD = "PASSWORD";
+CONST RPC_HOST = "HOSTNAME";
 CONST RPC_PORT = '6662';
 
-CONST ALLOWED_UPDATES = 2;
+CONST ALLOWED_UPDATES = 10;
 CONST SEARCH_DEPTH = 10;
 
 CONST SIGNATURE = 'Signature';
