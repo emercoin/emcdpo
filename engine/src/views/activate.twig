@@ -1,0 +1,62 @@
+{% extends 'base.twig' %}
+
+{% block body %}
+	<body class="green-bg mobile-palegreen-bg">
+	<a href="{{ path('show_key', {key: global.request.get('key')}) }}{{ global.request.get('otp') ? '?otp='~global.request.get('otp') }}">
+		<div class="btn-back btn-back-panel white upper"><i class="material-icons">keyboard_backspace</i> back</div>
+	</a>
+	<div class="one-column white">
+		<div class="mobile-bg">
+			<div class="green-overlay"></div>
+			<div class="blur-overlay">
+			    {% if key.data.Photo is defined %}
+				<img src="{{ key.data.Photo }}">
+			    {% endif %}
+			</div>
+			<div class="gradient-overlay-green"></div>
+		</div>
+		<h2 class="header-wide">{{ key.data.Item ?? 'No name' }}</h2>
+	        <form autocomplete="off" novalidate id="activate-item" enctype="application/x-www-form-urlencoded" method="post"
+	              action="{{ path('activation', {key: global.request.get('key')}) }}">
+			<input type="hidden" name="otp" value="{{ global.request.get('otp') }}">
+			<div class="txt-input txt-white">
+				<input type="password" name="password" required>
+				<span class="bar"></span>
+				<label class="upper">create your password</label>
+				<i class="hide-pwd material-icons">visibility_off</i>
+			</div>
+			<div class="txt-input txt-white">
+				<input type="password" name="password_repeat" required>
+				<span class="bar"></span>
+				<label class="upper">repeat your password</label>
+				<i class="hide-pwd material-icons">visibility_off</i>
+			</div>
+			<div class="txt-input txt-white">
+				<input type="text" name="owner" required>
+				<span class="bar"></span>
+				<label class="upper">your name</label>
+			</div>
+			<div class="txt-input txt-white">
+				<input type="text" name="comment" required>
+				<span class="bar"></span>
+				<label class="upper">your comment</label>
+			</div>
+			<input class="btn btn-white-green upper" type="submit" value="Activate">
+		</form>
+	</div>
+        <div class="popup-overlay" id="message">
+	    <div class="popup-window popup-green">
+                <h2 class="green">Warning <div class="close"><i class="material-icons green">close</i></div></h2>
+                <div class="outer-container">
+                    <div class="inner-container">
+			<div class="row">
+			    <p>Without creating a password you won't be able to change your comment in the future.</p>
+			</div>
+			<div class="btn-row">
+			    <input class="btn btn-green upper" id="activate-anyway" type="submit" value="Activate anyway">
+			</div>
+                    </div><!-- .inner-container -->
+                </div><!-- .outer-container -->
+            </div><!-- .popup-window -->
+	</div><!-- .popup-overlay -->
+{% endblock %}

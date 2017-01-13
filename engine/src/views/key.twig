@@ -2,114 +2,353 @@
 
 {% block body %}
     {% if first_owner %}
-        {% if first_owner.getOwner()|length > 0 %}
-            <h3>This key has already been activated by {{ first_owner.owner }} at {{ first_owner.date }}</h3>
-        {% else %}
-            <h3>This key has already been activated at {{ first_owner.date }}</h3>
-        {% endif %}
+	<body class="blue-bg mobile-blank-bg">
+	<a href="{{ path('_index_') }}">
+		<div class="btn-back btn-back-panel white upper"><i class="material-icons">keyboard_backspace</i> back</div>
+	</a>
+	<div class="multi-columns white">
+		<h2 class="header-colspan">{{ key.data.Item ?? 'No name'}}</h2>
+		<div class="colgroup">
+			<div class="column">
+				<h5><div class="round-icon"><i class="material-icons blue">lock_outline</i></div> This item was activated</h5>
+				<h4 class="pale-white">Product info</h4>
+				{% if global.request.get('key') is defined %}
+				    <label class="upper pale-white">Serial</label>
+				    <p>{{ global.request.get('key') }}</p>
+				{% endif %}
+				{% if key.Name is defined %}
+				    <label class="upper pale-white">NVS Record</label>
+				    <p>{{ key.Name }}</p>
+				{% endif %}
+				{% if key.data is defined %}
+			            {% for field,value in key.data %}
+				        {% if field not in ['Owner','Photo','OTP','Secret','Comment','Updated'] and value|length > 0 %}
+                                            <label class="upper pale-white">{{ field }}</label>
+		                            <p>{{ value }}</p>
+				        {% endif %}
+			            {% endfor %}
+				{% endif %}
+			</div>
+			<div class="column">
+				<h5><div class="round-icon">
+				    {% if EMERCOIN_DPO_VENDOR.data.Photo is defined %}
+					<img src="{{ EMERCOIN_DPO_VENDOR.data.Photo }}">
+				    {% endif %}
+				    </div> {{ EMERCOIN_DPO_VENDOR.data.Name ?? 'No vendor' }}</h5>
+				<h4 class="pale-white">Vendor info</h4>
+				{% if EMERCOIN_DPO_VENDOR_ID is defined %}
+				    <label class="upper pale-white">ID</label>
+				    <p>{{ EMERCOIN_DPO_VENDOR_ID }}</p>
+				{% endif %}
+				{% if EMERCOIN_DPO_VENDOR.getName() is defined %}
+				    <label class="upper pale-white">NVS Record</label>
+				    <p>{{ EMERCOIN_DPO_VENDOR.getName() }}</p>
+				{% endif %}
+				{% if EMERCOIN_DPO_VENDOR.data is defined %}
+			            {% for field,value in EMERCOIN_DPO_VENDOR.data %}
+				        {% if field not in ['Owner','Photo','OTP','Secret','Comment','Updated'] and value|length > 0 %}
+	                                    <label class="upper pale-white">{{ field }}</label>
+	                                    <p>{{ value }}</p>
+				        {% endif %}
+			            {% endfor %}
+				{% endif %}
+			</div>
+			<div class="column">
+				{% if key.data.Photo is defined %}
+				    <div class="preview">
+					<img src="{{ key.data.Photo }}">
+				    </div>
+				{% endif %}
+				{% if key.hasSecret() and key.secret|length > 0 and key.updated < ALLOWED_UPDATES %}
+				    <a href="{{ path('leave_comment', {key: global.request.get('key')}) }}">
+					<div class="btn btn-white-blue upper">Are you the current owner?</div>
+				    </a>
+				{% endif %}
+				<h4 class="pale-white">Activation info</h4>
+				<label class="upper pale-white">Date:</label> <strong>{{ first_owner.date|date("d M'y")|upper }}</strong>
+				<label class="upper pale-white no-topline">Time:</label> <strong>{{ first_owner.date|date("H:i T")|upper }}</strong>
+				{% if first_owner.owner %}
+				   <label class="upper pale-white no-topline">User:</label> <strong>{{ first_owner.owner|upper }}</strong>
+				{% endif %}
+				<p class="topline">If you see this item being sold in stores as a new one &mdash; be awared, it's counterfeit!</p>
+				{% if key.data.Comment %}
+				    <label class="upper pale-white">Comment from current owner</label>
+				    <p>{{ key.data.Comment }}</p>
+				{% endif %}
+			</div>
+		</div><!-- .colgroup -->
+	</div><!-- .multi-columns -->
+	<div class="mobile-info {{ key.data.Photo is not defined ? 'no-photo' }}">
+		{% if key.data.Photo is defined %}
+		    <div class="mobile-preview">
+			<img src="{{ key.data.Photo }}">
+		    </div>
+		    <div class="blur-overlay">
+			<img src="{{ key.data.Photo }}">
+		    </div>
+		    <div class="gradient-overlay-blue"></div>
+		{% endif %}
+		<div class="mobile-blue-bg"></div>
+		<div class="mobile-description white">
+			<h2>{{ key.data.Item ?? 'No name' }}</h2>
+			<div class="row">
+				<h5><div class="round-icon"><i class="material-icons blue">lock_outline</i></div> This item was activated</h5>
+				<p><label class="upper pale-white">Date:</label> <strong>{{ first_owner.date|date("d M'y")|upper }}</strong></p>
+				<p><label class="upper pale-white no-topline">Time:</label> <strong>{{ first_owner.date|date("H:i T")|upper }}</strong></p>
+				{% if first_owner.owner %}
+				    <p><label class="upper pale-white no-topline">User:</label> <strong>{{ first_owner.owner|upper }}</strong></p>
+				{% endif %}
+				<h4 class="pale-white upper popup-link" data-popup="#product-info">View product info</h4>
+			</div>
+			<div class="row separated">
+				If you see this item being sold in stores as a new one &mdash; be awared, it's counterfeit!
+			</div>
+			<div class="row">
+				<h5><div class="round-icon">
+				    {% if EMERCOIN_DPO_VENDOR.data.Photo is defined %}
+					<img src="{{ EMERCOIN_DPO_VENDOR.data.Photo }}">
+				    {% endif %}
+				    </div> {{ EMERCOIN_DPO_VENDOR.data.Name ?? 'No vendor' }}</h5>
+				<h4 class="pale-white upper popup-link" data-popup="#vendor-info">View vendor info</h4>
+			</div>
+		</div><!-- .mobile-description -->
+	</div><!-- .mobile-info -->
+	<div class="popup-overlay" id="product-info">
+		<div class="popup-window popup-blue">
+			<h2 class="blue">Product info <div class="close"><i class="material-icons blue">close</i></div></h2>
+			<div class="outer-container">
+				<div class="inner-container">
+				    {% if key.data.Comment %}
+					<div class="row">
+                                            <label class="upper gray">Comment from current owner</label>
+                                            <p>{{ key.data.Comment }}</p>
+					</div>
+                                    {% endif %}
+				    {% if global.request.get('key') is defined %}
+					<div class="row">
+						<label class="upper gray">Serial</label>
+						<p>{{ global.request.get('key') }}</p>
+					</div>
+				    {% endif %}
+				    {% if key.name is defined %}
+					<div class="row">
+						<label class="upper gray">NVS Record</label>
+						<p>{{ key.name }}</p>
+					</div>
+				    {% endif %}
+				    {% if key.data is defined %}
+					{% for field,value in key.data %}
+					    {% if field not in ['Owner','Photo','OTP','Secret','Comment','Updated'] and value|length > 0 %}
+						<div class="row">
+	                                             <label class="upper gray">{{ field }}</label>
+			                             <p>{{ value }}</p>
+						</div>
+					    {% endif %}
+	                                {% endfor %}
+				    {% endif %}
+				    {% if key.hasSecret() and key.secret|length > 0 and key.updated < ALLOWED_UPDATES %}
+					<div class="btn-row">
+					    <a href="{{ path('leave_comment', {key: global.request.get('key')}) }}">
+						<div class="btn btn-white-blue upper">Are you the current owner?</div>
+				            </a>
+				        </div>
+				    {% endif %}
+				</div><!-- .inner-container -->
+			</div><!-- .outer-container -->
+		</div><!-- .popup-window -->
+	</div><!-- .popup-overlay -->
+	<div class="popup-overlay" id="vendor-info">
+		<div class="popup-window popup-blue">
+			<h2 class="blue">Vendor info <div class="close"><i class="material-icons blue">close</i></div></h2>
+			<div class="outer-container">
+				<div class="inner-container">
+				    {% if EMERCOIN_DPO_VENDOR_ID is defined %}
+					<div class="row">
+						<label class="upper gray">ID</label>
+						<p>{{ EMERCOIN_DPO_VENDOR_ID }}</p>
+					</div>
+				    {% endif %}
+				    {% if EMERCOIN_DPO_VENDOR.getName() is defined %}
+					<div class="row">
+						<label class="upper gray">NVS Record</label>
+						<p>{{ EMERCOIN_DPO_VENDOR.getName() }}</p>
+					</div>
+				    {% endif %}
+				    {% if EMERCOIN_DPO_VENDOR.data is defined %}
+	                                {% for field,value in EMERCOIN_DPO_VENDOR.data %}
+					    {% if field not in ['Owner','Photo','OTP','Secret','Comment','Updated'] and value|length > 0 %}
+						<div class="row">
+				                        <label class="upper gray">{{ field }}</label>
+		                                        <p>{{ value }}</p>
+						</div>
+					    {% endif %}
+	                                {% endfor %}
+				    {% endif %}
+				</div><!-- .inner-container -->
+			</div><!-- .outer-container -->
+		</div><!-- .popup-window -->
+	</div><!-- .popup-overlay -->
     {% else %}
-        <h3>This key is valid</h3>
+	<body class="green-bg mobile-blank-bg">
+	<a href="{{ path('_index_') }}">
+		<div class="btn-back btn-back-panel white upper"><i class="material-icons">keyboard_backspace</i> back</div>
+	</a>
+	<div class="multi-columns white">
+		<h2 class="header-colspan">{{ key.data.Item ?? 'No name' }}</h2>
+		<div class="colgroup">
+			<div class="column">
+				<h5><div class="round-icon"><i class="material-icons green">done</i></div> This is an original item</h5>
+				<h4 class="pale-white">Product info</h4>
+				{% if global.request.get('key') is defined %}
+				    <label class="upper pale-white">Serial</label>
+				    <p>{{ global.request.get('key') }}</p>
+				{% endif %}
+				{% if key.Name is defined %}
+				    <label class="upper pale-white">NVS Record</label>
+				    <p>{{ key.Name }}</p>
+				{% endif %}
+				{% if key.data is defined %}
+			          {% for field,value in key.data %}
+				    {% if field not in ['Owner','Photo','OTP','Secret','Comment','Updated'] and value|length > 0 %}
+                                        <label class="upper pale-white">{{ field }}</label>
+		                        <p>{{ value }}</p>
+				    {% endif %}
+			          {% endfor %}
+				{% endif %}
+			</div>
+			<div class="column">
+				<h5><div class="round-icon">
+				    {% if EMERCOIN_DPO_VENDOR.data.Photo is defined %}
+					<img src="{{ EMERCOIN_DPO_VENDOR.data.Photo }}">
+				    {% endif %}
+				    </div> {{ EMERCOIN_DPO_VENDOR.data.Name ?? 'No name' }}</h5>
+				<h4 class="pale-white">Vendor info</h4>
+				{% if EMERCOIN_DPO_VENDOR_ID is defined %}
+				    <label class="upper pale-white">ID</label>
+				    <p>{{ EMERCOIN_DPO_VENDOR_ID }}</p>
+				{% endif %}
+				{% if EMERCOIN_DPO_VENDOR.getName() is defined %}
+				    <label class="upper pale-white">NVS Record</label>
+				    <p>{{ EMERCOIN_DPO_VENDOR.getName() }}</p>
+				{% endif %}
+				{% if EMERCOIN_DPO_VENDOR.data is defined %}
+			          {% for field,value in EMERCOIN_DPO_VENDOR.data %}
+				    {% if field not in ['Owner','Photo','OTP','Secret','Comment','Updated'] and value|length > 0 %}
+	                                <label class="upper pale-white">{{ field }}</label>
+	                                <p>{{ value }}</p>
+				    {% endif %}
+			          {% endfor %}
+				{% endif %}
+			</div>
+			<div class="column">
+				{% if key.data.Photo is defined %}
+				    <div class="preview">
+					<img src="{{ key.data.Photo }}">
+				    </div>
+				{% endif %}
+				{% if global.request.get('otp') %}
+				    <a href="{{ path('activate', {key: global.request.get('key')}) }}?otp={{ global.request.get('otp') }}">
+					<div class="btn btn-white-green upper">Activate this item</div>
+				    </a>
+				{% endif %}
+			</div>
+		</div><!-- .colgroup -->
+	</div><!-- .multi-columns -->
+	<div class="mobile-info {{ key.data.Photo is not defined ? 'no-photo' }}">
+		{% if key.data.Photo is defined %}
+		    <div class="mobile-preview">
+			<img src="{{ key.data.Photo }}">
+		    </div>
+		    <div class="blur-overlay">
+			<img src="{{ key.data.Photo }}">
+		    </div>
+		    <div class="gradient-overlay-green"></div>
+		{% endif %}
+		<div class="mobile-green-bg"></div>
+		<div class="mobile-description white">
+			<h2>{{ key.data.Item ?? 'No name' }}</h2>
+			<div class="row">
+				<h5><div class="round-icon"><i class="material-icons green">done</i></div> This is an original item</h5>
+				<h4 class="pale-white upper popup-link" data-popup="#product-info">View product info</h4>
+			</div>
+			<div class="row">
+				<h5><div class="round-icon">
+				    {% if EMERCOIN_DPO_VENDOR.data.Photo is defined %}
+					<img src="{{ EMERCOIN_DPO_VENDOR.data.Photo }}">
+				    {% endif %}
+				</div> {{ EMERCOIN_DPO_VENDOR.data.Name ?? 'No vendor' }}</h5>
+				<h4 class="pale-white upper popup-link" data-popup="#vendor-info">View vendor info</h4>
+			</div>
+			<div class="btn-row">
+				{% if global.request.get('otp') %}
+				    <a href="{{ path('activate', {key: global.request.get('key')}) }}?otp={{ global.request.get('otp') }}">
+					<div class="btn btn-white-green upper">Activate this item</div>
+				    </a>
+				{% endif %}
+			</div>
+		</div><!-- .mobile-description -->
+	</div><!-- .mobile-info -->
+	<div class="popup-overlay" id="product-info">
+		<div class="popup-window popup-green">
+			<h2 class="green">Product info <div class="close"><i class="material-icons green">close</i></div></h2>
+			<div class="outer-container">
+				<div class="inner-container">
+					{% if global.request.get('key') %}
+					    <div class="row">
+						<label class="upper gray">Serial</label>
+						<p>{{ global.request.get('key') }}</p>
+					    </div>
+					{% endif %}
+					{% if key.name is defined %}
+					    <div class="row">
+						<label class="upper gray">NVS Record</label>
+						<p>{{ key.name }}</p>
+					    </div>
+					{% endif %}
+					{% if key.data is defined %}
+					  {% for field,value in key.data %}
+					    {% if field not in ['Owner','Photo','OTP','Secret','Comment','Updated'] and value|length > 0 %}
+						<div class="row">
+	                                             <label class="upper gray">{{ field }}</label>
+			                             <p>{{ value }}</p>
+						</div>
+					    {% endif %}
+	                                  {% endfor %}
+					{% endif %}
+				</div><!-- .inner-container -->
+			</div><!-- .outer-container -->
+		</div><!-- .popup-window -->
+	</div><!-- .popup-overlay -->
+	<div class="popup-overlay" id="vendor-info">
+		<div class="popup-window popup-green">
+			<h2 class="green">Vendor info <div class="close"><i class="material-icons green">close</i></div></h2>
+			<div class="outer-container">
+				<div class="inner-container">
+					{% if EMERCOIN_DPO_VENDOR_ID is defined %}
+					    <div class="row">
+						<label class="upper gray">ID</label>
+						<p>{{ EMERCOIN_DPO_VENDOR_ID }}</p>
+					    </div>
+					{% endif %}
+					{% if EMERCOIN_DPO_VENDOR.getName() is defined %}
+					    <div class="row">
+						<label class="upper gray">NVS Record</label>
+						<p>{{ EMERCOIN_DPO_VENDOR.getName() }}</p>
+					    </div>
+					{% endif %}
+					{% if EMERCOIN_DPO_VENDOR.data is defined %}
+	                                  {% for field,value in EMERCOIN_DPO_VENDOR.data %}
+					    {% if field not in ['Owner','Photo','OTP','Secret','Comment','Updated'] and value|length > 0 %}
+						<div class="row">
+				                        <label class="upper gray">{{ field }}</label>
+		                                        <p>{{ value }}</p>
+						</div>
+					    {% endif %}
+	                                  {% endfor %}
+					{% endif %}
+				</div><!-- .inner-container -->
+			</div><!-- .outer-container -->
+		</div><!-- .popup-window -->
+	</div><!-- .popup-overlay -->
     {% endif %}
-
-    <strong>Vendor Details:</strong>
-    <table border="1">
-        <tbody>
-        <tr>
-            <th>Id</th>
-            <td>{{ EMERCOIN_DPO_VENDOR_ID }}</td>
-        </tr>
-        <tr>
-            <th>Item</th>
-            <td>{{ EMERCOIN_DPO_VENDOR.getName() }}</td>
-        </tr>
-        {% for field,value in EMERCOIN_DPO_VENDOR.data %}
-        <tr>
-            <th>{{ field }}</th>
-            <td>{{ value }}</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    <br>
-    <strong>Product Details:</strong>
-    <table border="1">
-        <tbody>
-        <tr>
-            <th>Serial</th>
-            <td>{{ global.request.get('key') }}</td>
-        </tr>
-        <tr>
-            <th>Name</th>
-            <td>{{ key.name }}</td>
-        </tr>
-        {% for field,value in key.data %}
-            <tr>
-                <th>{{ field }}</th>
-                <td>{{ value }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    <br>
-    {% if key.hasOTP() and not key.hasSecret() %}
-        <form autocomplete="off" enctype="application/x-www-form-urlencoded" method="post"
-              action="{{ path('activation', {key: global.request.get('key')}) }}">
-            <fieldset>
-                <div>
-                    <label>
-                        Please enter your one time password
-                        <input type="password" name="otp" value="{{ global.request.get('otp') }}"/>
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        Please enter your password to get the entry
-                        <input type="password" name="password"/>
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        Please repeat your password
-                        <input type="password" name="password_repeat"/>
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        Kindly save your name
-                        <input type="text" name="owner"/>
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        Save your comment
-                        <textarea name="comment"></textarea>
-                    </label>
-                </div>
-                <button type="submit">Submit</button>
-            </fieldset>
-        </form>
-    {% elseif key.hasSecret() and key.secret|length > 0 and key.updated < ALLOWED_UPDATES %}
-        <form autocomplete="off" enctype="application/x-www-form-urlencoded" method="post"
-              action="{{ path('comment', {key: global.request.get('key') }) }}">
-            <fieldset>
-                <div><strong>That was you?</strong></div>
-                <div>
-                    <label>
-                        Authorize by your password:
-                        <input type="password" name="password"/>
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        To leave a comment:
-                        <textarea name="comment"></textarea>
-                    </label>
-                </div>
-                <button type="submit">Submit</button>
-            </fieldset>
-        </form>
-    {% endif %}
-    <div>
-        <a href="{{ path('_index_') }}">Back</a>
-    </div>
 {% endblock %}

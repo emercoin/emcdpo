@@ -1,0 +1,17 @@
+{% extends 'base.twig' %}
+
+{% block body %}
+<body class="yellow-bg">
+	<div class="one-column">
+		<div class="logo logo-black"></div>
+		<h1 class="black upper">Emercoin</h1>
+		<h3 class="black upper">Digital Proof-of-Ownership</h3>
+		<div class="error black">
+			<h1><i class="material-icons">warning</i>Error</h1>
+			<span>{{ error }}</span>
+		</div>
+		<form onsubmit="window.history.back();return false">
+			<input class="btn btn-black-active upper" type="submit" value="Go back">
+		</form>
+	</div>
+{% endblock body %}
