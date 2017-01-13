@@ -173,7 +173,7 @@ namespace Emercoin {
                     ]
                 );
             } catch (EmercoinException $e) {
-                echo $e->getMessage();
+                //echo $e->getMessage();
 
                 return false;
             }
