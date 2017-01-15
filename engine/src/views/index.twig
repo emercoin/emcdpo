@@ -1,13 +1,27 @@
 {% extends 'base.twig' %}
 
 {% block body %}
-    <form autocomplete="off" enctype="application/x-www-form-urlencoded" method="get" action="{{ path('_index_') }}">
-        <fieldset>
-            <label>
-                Your secret key
-                <input type="text" name="key"/>
-            </label>
-            <button type="submit">Submit</button>
-        </fieldset>
-    </form>
+<body class="">
+	<div class="one-column">
+		<div class="logo"></div>
+		<h1 class="pink upper">Emercoin</h1>
+		<h3 class="black upper">Digital Proof-of-Ownership</h3>
+		<div class="error black">
+			<h1><i class="material-icons">warning</i>Invalid code</h1>
+			<span>It may be incorrect or corrupt. Try again or contact item vendor for support.</span>
+		</div>
+		<form id="form-pubcode" novalidate action="{{ path('_index_') }}" method="get" autocomplete="off">
+			<div class="txt-input txt-pink">
+				<input type="text" name="key" id="public-code" required>
+				<span class="bar"></span>
+				<label class="upper">public code* (required)</label>
+			</div>
+			<div class="txt-input txt-pink">
+				<input type="text" name="otp" required>
+				<span class="bar"></span>
+				<label class="upper">Secret code</label>
+			</div>
+			<input class="btn btn-pink-inactive upper" id="submit" type="submit" disabled value="Check item">
+		</form>
+	</div>
 {% endblock body %}

@@ -1,0 +1,36 @@
+{% extends 'base.twig' %}
+
+{% block body %}
+	<body class="blue-bg mobile-paleblue-bg">
+	<a href="{{ path('show_key', {key: global.request.get('key')}) }}">
+		<div class="btn-back btn-back-panel white upper"><i class="material-icons">keyboard_backspace</i> back</div>
+	</a>
+	<div class="one-column white">
+		<div class="mobile-bg">
+			<div class="blue-overlay"></div>
+			<div class="blur-overlay">
+			    {% if key.data[PHOTO] is defined %}
+				<img src="{{ key.data[PHOTO] }}">
+			    {% endif %}
+			</div>
+			<div class="gradient-overlay-blue"></div>
+		</div>
+		<h2 class="header-wide">{{ key.data[ITEM] ?? 'No name' }}</h2>
+		<p class="align-left">You may change your comment (the old one will be overwritten)</p>
+		<form id="form-activate" novalidate autocomplete="off" enctype="application/x-www-form-urlencoded" 
+		action="{{ path('comment', {key: global.request.get('key') }) }}" method="post">
+			<div class="txt-input txt-white">
+				<input type="password" name="password" required>
+				<span class="bar"></span>
+				<label class="upper">your password</label>
+				<i class="hide-pwd material-icons">visibility_off</i>
+			</div>
+			<div class="txt-input txt-white">
+				<input type="text" name="comment" required>
+				<span class="bar"></span>
+				<label class="upper">your comment</label>
+			</div>
+			<input class="btn btn-white-blue upper" type="submit" value="Save">
+		</form>
+	</div>
+{% endblock %}
