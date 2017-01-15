@@ -21,3 +21,6 @@ CONST OTP = 'OTP';
 CONST UPDATED = 'Updated';
 CONST NAME = 'Name';
 CONST PHOTO = 'Photo';
+CONST ITEM = 'Item';
+CONST LOGO = 'Logo';
+

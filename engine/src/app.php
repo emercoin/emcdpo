@@ -45,6 +45,16 @@ $app->before(
                 $twig->addGlobal('ALLOWED_UPDATES', ALLOWED_UPDATES);
                 $twig->addGlobal('EMERCOIN_DPO_VENDOR', $app['emercoin.dpo.vendor']);
                 $twig->addGlobal('EMERCOIN_DPO_VENDOR_ID', DPO_VENDOR);
+                $twig->addGlobal('PHOTO',     PHOTO);
+                $twig->addGlobal('SIGNATURE', SIGNATURE);
+                $twig->addGlobal('COMMENT',   COMMENT);
+                $twig->addGlobal('OWNER',     OWNER);
+                $twig->addGlobal('SECRET',    SECRET);
+                $twig->addGlobal('OTP',       OTP);
+                $twig->addGlobal('UPDATED',   UPDATED);
+                $twig->addGlobal('NAME',      NAME);
+                $twig->addGlobal('ITEM',      ITEM);
+                $twig->addGlobal('LOGO',      LOGO);
 
                 return $twig;
             }

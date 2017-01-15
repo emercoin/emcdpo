@@ -9,13 +9,13 @@
 		<div class="mobile-bg">
 			<div class="blue-overlay"></div>
 			<div class="blur-overlay">
-			    {% if key.data.Photo is defined %}
-				<img src="{{ key.data.Photo }}">
+			    {% if key.data[PHOTO] is defined %}
+				<img src="{{ key.data[PHOTO] }}">
 			    {% endif %}
 			</div>
 			<div class="gradient-overlay-blue"></div>
 		</div>
-		<h2 class="header-wide">{{ key.data.Item ?? 'No name' }}</h2>
+		<h2 class="header-wide">{{ key.data[ITEM] ?? 'No name' }}</h2>
 		<p class="align-left">You may change your comment (the old one will be overwritten)</p>
 		<form id="form-activate" novalidate autocomplete="off" enctype="application/x-www-form-urlencoded" 
 		action="{{ path('comment', {key: global.request.get('key') }) }}" method="post">
