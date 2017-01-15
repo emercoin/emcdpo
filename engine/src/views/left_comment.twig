@@ -1,13 +1,17 @@
 {% extends 'base.twig' %}
 
 {% block body %}
-    {% if error is not defined %}
-        <h3>You have successfully left a comment</h3>
-        <h4>Your changes will be submitted in 30 minutes</h4>
-    {% else %}
-        {{ error }}
-    {% endif %}
-    <div>
-        <a href="{{ path('_index_') }}">Back</a>
-    </div>
-{% endblock body %}
+<body class="blue-bg">
+    <a href="{{ path('show_key', {key: global.request.get('key')}) }}">
+	    <div class="btn-back btn-back-panel white upper"><i class="material-icons">keyboard_backspace</i> back</div>
+    </a>
+	<div class="one-column white message">
+		<h1><i class="material-icons">done</i> Success</h1>
+		<p>Your changes are applied. It may take a while for a modified content to get updated (10-20 minutes).</p>
+		<p>Thank you for your patience!</p>
+                <a href="{{ path('show_key', {key: global.request.get('key')}) }}">
+                    <div class="btn btn-white-blue upper btn-back">Go back</div>
+                </a>
+	</div>
+{% endblock %}
+

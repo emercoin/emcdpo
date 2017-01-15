@@ -35,7 +35,8 @@ $app->before(
             $req = new \Emercoin\Request('name_show', ['dpo:'.DPO_VENDOR]);
             $app['emercoin.dpo.vendor'] = new \Emercoin\Key($req->getData());
         } catch (\Emercoin\WalletConnectException $e) {
-            die('Settings Error');
+            require_once('views/settings_error.html');
+	    exit;
         }
 
         $app->extend(
@@ -44,6 +45,16 @@ $app->before(
                 $twig->addGlobal('ALLOWED_UPDATES', ALLOWED_UPDATES);
                 $twig->addGlobal('EMERCOIN_DPO_VENDOR', $app['emercoin.dpo.vendor']);
                 $twig->addGlobal('EMERCOIN_DPO_VENDOR_ID', DPO_VENDOR);
+                $twig->addGlobal('PHOTO',     PHOTO);
+                $twig->addGlobal('SIGNATURE', SIGNATURE);
+                $twig->addGlobal('COMMENT',   COMMENT);
+                $twig->addGlobal('OWNER',     OWNER);
+                $twig->addGlobal('SECRET',    SECRET);
+                $twig->addGlobal('OTP',       OTP);
+                $twig->addGlobal('UPDATED',   UPDATED);
+                $twig->addGlobal('NAME',      NAME);
+                $twig->addGlobal('ITEM',      ITEM);
+                $twig->addGlobal('LOGO',      LOGO);
 
                 return $twig;
             }
@@ -55,8 +66,11 @@ $app->get(
     '/',
     function (Request $request) use ($app) {
         $key = $request->query->get('key');
+        $otp = $request->query->get('otp');
 
-        if ($key) {
+        if ($key && $otp) {
+            return $app->redirect($app['url_generator']->generate('show_key', ['key' => $key, 'otp' => $otp]));
+        } else if ($key) {
             return $app->redirect($app['url_generator']->generate('show_key', ['key' => $key]));
         }
 
@@ -65,19 +79,36 @@ $app->get(
 )->bind('_index_');
 
 $app->get(
+    '/check_key/{key}',
+    function (Silex\Application $app, $key, Request $req) {
+        $m = new Emercoin\Manager();
+        $emcKey = $m->getKey($key);
+
+ 	return var_export(isset($emcKey), true);
+ 	//return isset($emcKey) ? 'true' : 'false';
+    }
+)->bind('check_key');
+
+$app->get(
     '/key/{key}',
     function (Silex\Application $app, $key, Request $req) {
         $m = new Emercoin\Manager();
-        $ek = $m->getKey($key);
+        $emcKey = $m->getKey($key);
 
-        if (!$ek) { // not found
-            return $app['twig']->render('key_notfound.twig');
+        if (!$emcKey) {
+            return $app['twig']->render('error.twig', ['error' => 'This key cannot be found']);
         }
 
+	if ($emcKey->hasOTP() && !$emcKey->hasSecret() && $req->query->get('otp') !== null) {
+	    if (!$emcKey->compareOtp($req->query->get('otp'))) {
+    	        return $app['twig']->render('error.twig', ['error' => 'Wrong OTP']);
+	    }
+	}
+
         $firstOwner = null;
-        if ($ek->hasSecret()) {
+        if ($emcKey->hasSecret()) {
             /** @var Emercoin\Key $value */
-            foreach ($ek->getHistory() as $value) {
+            foreach ($emcKey->getHistory() as $value) {
                 if ($value->hasOwner()) {
                     $firstOwner = $value;
                     break;
@@ -88,7 +119,7 @@ $app->get(
         return $app['twig']->render(
             'key.twig',
             array(
-                'key' => $ek,
+                'key' => $emcKey,
                 'first_owner' => $firstOwner,
             )
         );
@@ -99,11 +130,11 @@ $app->post(
     '/key/{key}/activation',
     function (Silex\Application $app, $key, Request $req) {
         $m = new Emercoin\Manager();
-        /** @var Emercoin\Key $ek */
-        $ek = $m->getKey($key);
+        /** @var Emercoin\Key $emcKey */
+        $emcKey = $m->getKey($key);
 
-        if (!$ek) { // not found
-            return $app['twig']->render('key_notfound.twig');
+        if (!$emcKey) {
+            return $app['twig']->render('error.twig', ['error' => 'This key cannot be found']);
         }
 
         $form = [
@@ -114,41 +145,51 @@ $app->post(
             'owner' => $req->get('owner'),
         ];
 
-        if ($ek->hasOTP() && !$ek->hasSecret()) {
-            if ($ek->compareOtp($form['otp'])) {
+        if ($emcKey->hasOTP() && !$emcKey->hasSecret()) {
+            if ($emcKey->compareOtp($form['otp'])) {
                 if ($form['password'] === $form['password_repeat']) {
-                    $ek->setOwner($form['owner']);
-                    $ek->setSecret($form['password']);
-                    $ek->setComment($form['comment']);
-                    $ek->incrementUpdates();
+                    $emcKey->setOwner($form['owner']);
+                    $emcKey->setSecret($form['password']);
+                    $emcKey->setComment($form['comment']);
+                    $emcKey->incrementUpdates();
 
-                    $result = $m->saveKey($ek);
+                    $result = @$m->saveKey($emcKey);
 
                     if ($result) {
                         return $app['twig']->render('key_activated.twig', []);
                     }
 
-                    return $app['twig']->render('key_activated.twig', ['error' => 'Error occurred while saving data']);
+                    return $app['twig']->render('error.twig', ['error' => 'Something went wrong. Please wait for a while and try again.']);
                 }
 
-                return $app['twig']->render('key_activated.twig', ['error' => 'Password mismatch']);
+                return $app['twig']->render('error.twig', ['error' => 'Password mismatch']);
             }
 
-            return $app['twig']->render('key_activated.twig', ['error' => 'Wrong OTP']);
+            return $app['twig']->render('error.twig', ['error' => 'Wrong OTP']);
         }
 
-        return $app['twig']->render('forbidden.twig', array());
+        return $app['twig']->render('error.twig', ['error' => 'This action is forbidden']);
     }
 )->bind('activation');
+
+$app->get(
+    '/key/{key}/activate',
+    function (Silex\Application $app, $key, Request $req) {
+        $m = new Emercoin\Manager();
+        $emcKey = $m->getKey($key);
+
+        return $app['twig']->render('activate.twig', [ 'key' => $emcKey ]);
+    }
+)->bind('activate');
 
 $app->post(
     '/key/{key}/comment',
     function (Silex\Application $app, $key, Request $req) {
         $m = new Emercoin\Manager();
-        $ek = $m->getKey($key);
+        $emcKey = $m->getKey($key);
 
-        if (!$ek) {
-            return $app['twig']->render('key_notfound.twig');
+        if (!$emcKey) {
+	    return $app['twig']->render('error.twig', ['error' => 'This key cannot be found']);
         }
 
         $form = [
@@ -156,25 +197,36 @@ $app->post(
             'comment' => $req->get('comment'),
         ];
 
-        if ($ek->hasSecret()) {
+        if ($emcKey->hasSecret()) {
             $password = $form['password'];
-            if ($ek->compareSecret($password) && $ek->getUpdated() < ALLOWED_UPDATES) {
-                $ek->setComment($form['comment']);
-                $ek->incrementUpdates();
-                $result = $m->saveKey($ek);
+            if ($emcKey->compareSecret($password) && $emcKey->getUpdated() < ALLOWED_UPDATES) {
+                $emcKey->setComment($form['comment']);
+                $emcKey->incrementUpdates();
+
+                $result = @$m->saveKey($emcKey);
 
                 if ($result) {
                     return $app['twig']->render('left_comment.twig', []);
                 }
 
-                return $app['twig']->render('left_comment.twig', ['error' => 'Error occurred while saving data']);
+                return $app['twig']->render('error.twig', ['error' => 'Error occurred while saving data']);
             }
 
-            return $app['twig']->render('left_comment.twig', ['error' => 'Wrong password or exceed limit of updates']);
+            return $app['twig']->render('error.twig', ['error' => 'Wrong password or exceed limit of updates']);
         }
 
-        return $app['twig']->render('forbidden.twig', []);
+        return $app['twig']->render('error.twig', ['error' => 'This action is forbidden']);
     }
 )->bind('comment');
+
+$app->get(
+    '/key/{key}/leave_comment',
+    function (Silex\Application $app, $key, Request $req) {
+        $m = new Emercoin\Manager();
+        $emcKey = $m->getKey($key);
+
+        return $app['twig']->render('comment.twig', [ 'key' => $emcKey ]);
+    }
+)->bind('leave_comment');
 
 return $app;
