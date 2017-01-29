@@ -45,6 +45,8 @@ $app->before(
                 $twig->addGlobal('ALLOWED_UPDATES', ALLOWED_UPDATES);
                 $twig->addGlobal('EMERCOIN_DPO_VENDOR', $app['emercoin.dpo.vendor']);
                 $twig->addGlobal('EMERCOIN_DPO_VENDOR_ID', DPO_VENDOR);
+                $twig->addGlobal('BASE_URL', BASE_URL);
+
                 $twig->addGlobal('PHOTO',     PHOTO);
                 $twig->addGlobal('SIGNATURE', SIGNATURE);
                 $twig->addGlobal('COMMENT',   COMMENT);
