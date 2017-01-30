@@ -1,0 +1,29 @@
+1. Install deps: apache2, libapache2-mod-php, php-xml
+
+2. Clone the Git repository (for example, to /var/www)
+
+3. Prepare vendor's details, apply them to NVS
+
+4. Edit engine/src/settings.php, and configure the fields
+
+5. Download app's deps:
+
+cd engine
+curl -sS https://getcomposer.org/installer | php
+php composer.phar install --prefer-dist
+
+6. Change permissions to Apache's user:
+
+chown -R engine
+
+7. Configure Apache:
+
+Alias /dpo /var/www/emcdpo/engine/web
+<Directory /var/www/emcdpo/engine/web>
+    Options -MultiViews
+    RewriteEngine On
+    RewriteBase /dpo
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [QSA,L]
+</Directory>
