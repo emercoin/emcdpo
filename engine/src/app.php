@@ -29,38 +29,50 @@ $app->register(
 //);
 //$app->register(new FormServiceProvider());
 
+class SettingsErrorHttpException extends \Symfony\Component\HttpKernel\Exception\HttpException
+{
+	function __construct()
+	{
+		parent::__construct(500, 'Settings error');
+	}
+}
+
 $app->before(
     function () use ($app) {
         try {
             $req = new \Emercoin\Request('name_show', ['dpo:'.DPO_VENDOR]);
             $app['emercoin.dpo.vendor'] = new \Emercoin\Key($req->getData());
+
+	        $app->extend(
+	            'twig',
+	            function ($twig, $app) {
+	                $twig->addGlobal('ALLOWED_UPDATES', ALLOWED_UPDATES);
+	                $twig->addGlobal('EMERCOIN_DPO_VENDOR', $app['emercoin.dpo.vendor']);
+	                $twig->addGlobal('EMERCOIN_DPO_VENDOR_ID', DPO_VENDOR);
+
+	                $twig->addGlobal('PHOTO',     PHOTO);
+	                $twig->addGlobal('SIGNATURE', SIGNATURE);
+	                $twig->addGlobal('COMMENT',   COMMENT);
+	                $twig->addGlobal('OWNER',     OWNER);
+	                $twig->addGlobal('SECRET',    SECRET);
+	                $twig->addGlobal('OTP',       OTP);
+	                $twig->addGlobal('UPDATED',   UPDATED);
+	                $twig->addGlobal('NAME',      NAME);
+	                $twig->addGlobal('ITEM',      ITEM);
+	                $twig->addGlobal('LOGO',      LOGO);
+
+	                return $twig;
+	            }
+	        );
         } catch (\Emercoin\WalletConnectException $e) {
-            require_once('views/settings_error.html');
-	    exit;
+        	throw new SettingsErrorHttpException();
         }
-
-        $app->extend(
-            'twig',
-            function ($twig, $app) {
-                $twig->addGlobal('ALLOWED_UPDATES', ALLOWED_UPDATES);
-                $twig->addGlobal('EMERCOIN_DPO_VENDOR', $app['emercoin.dpo.vendor']);
-                $twig->addGlobal('EMERCOIN_DPO_VENDOR_ID', DPO_VENDOR);
-                $twig->addGlobal('PHOTO',     PHOTO);
-                $twig->addGlobal('SIGNATURE', SIGNATURE);
-                $twig->addGlobal('COMMENT',   COMMENT);
-                $twig->addGlobal('OWNER',     OWNER);
-                $twig->addGlobal('SECRET',    SECRET);
-                $twig->addGlobal('OTP',       OTP);
-                $twig->addGlobal('UPDATED',   UPDATED);
-                $twig->addGlobal('NAME',      NAME);
-                $twig->addGlobal('ITEM',      ITEM);
-                $twig->addGlobal('LOGO',      LOGO);
-
-                return $twig;
-            }
-        );
     }
 );
+
+$app->error(function (\SettingsErrorHttpException $e, Request $request, $code) use ($app) {
+    return $app['twig']->render('settings_error.twig', []);
+});
 
 $app->get(
     '/',
