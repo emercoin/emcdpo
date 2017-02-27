@@ -5,9 +5,16 @@
         <meta name="viewport" content="width=device-width, initial-scale=0.85, maximum-scale=0.85, user-scalable=0">
         <title>EMC DPO Manager</title>
         <link rel="stylesheet" type="text/css" href="{{ global.request.basepath }}/style.css">
+		<link rel="stylesheet" type="text/css" href="{{ global.request.basepath }}/css/cs-select.css">
+		<link rel="stylesheet" type="text/css" href="{{ global.request.basepath }}/css/cs-skin-underline.css">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body class="yellow-bg">
+<select class="cs-select cs-skin-underline">
+	<option value="" disabled selected>{{ global.session.get('locale')|upper }}</option>
+	<option data-link="{{ path('setlocale', {'locale': 'en'}) }}" value="en">EN</option>
+	<option data-link="{{ path('setlocale', {'locale': 'ru'}) }}" value="ru">RU</option>
+</select>
 	<div class="one-column">
 		<div class="logo logo-black"></div>
 		<h1 class="black upper">Emercoin</h1>
@@ -17,5 +24,14 @@
 			<span>Check your settings file located at <strong>%DOCUMENT_ROOT%/engine/src/settings.php</strong></span>
 		</div>
 	</div>
+<script type="text/javascript" src="{{ global.request.basepath }}/js/classie.js"></script>
+<script type="text/javascript" src="{{ global.request.basepath }}/js/selectFx.js"></script>
+<script>
+	(function() {
+		[].slice.call( document.querySelectorAll( 'select.cs-select' ) ).forEach( function(el) {
+			new SelectFx(el, {newTab: false});
+		} );
+	})();
+</script>
 </body>
 </html>

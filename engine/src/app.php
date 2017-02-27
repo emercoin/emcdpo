@@ -1,78 +1,100 @@
 <?php
 
 use Symfony\Component\HttpFoundation\Request;
-
-//use Silex\Provider\FormServiceProvider;
-//use Symfony\Component\Validator\Constraints as Assert;
-//use Symfony\Component\Form\Extension\Core\Type;
+use Symfony\Component\Translation\Loader\YamlFileLoader;
 
 require_once __DIR__.'/settings.php';
 require_once __DIR__.'/../vendor/autoload.php';
 require_once __DIR__.'/emercoin.php';
 
 $app = new Silex\Application();
-$app['debug'] = false;
+
+$app['debug'] = IN_DEBUG_MODE;
+
 $app->register(
     new Silex\Provider\TwigServiceProvider(),
     array(
         'twig.path' => __DIR__.'/views',
     )
 );
-//$app->register(new Silex\Provider\ValidatorServiceProvider());
-//$app->register(new Silex\Provider\LocaleServiceProvider());
-//$app->register(
-//    new Silex\Provider\TranslationServiceProvider(),
-//    array(
-//        'locale_fallbacks' => array('en'),
-//        'translator.domains' => array(),
-//    )
-//);
-//$app->register(new FormServiceProvider());
+
+$app->register(new Silex\Provider\SessionServiceProvider());
+$app->register(new Silex\Provider\LocaleServiceProvider());
+$app->register(
+    new Silex\Provider\TranslationServiceProvider(),
+    array(
+        'locale_fallbacks' => array('en'),
+        'translator.domains' => array(),
+    )
+);
+
+$app->extend(
+    'translator',
+    function ($translator, $app) {
+        $translator->addLoader('yaml', new YamlFileLoader());
+        $translator->addResource('yaml', __DIR__.'/locales/en.yml', 'en');
+
+        return $translator;
+    }
+);
+
 
 class SettingsErrorHttpException extends \Symfony\Component\HttpKernel\Exception\HttpException
 {
-	function __construct()
-	{
-		parent::__construct(500, 'Settings error');
-	}
+    function __construct()
+    {
+        parent::__construct(500, 'Settings error');
+    }
 }
 
 $app->before(
-    function () use ($app) {
+    function (Request $request) use ($app) {
+        $locale = null;
+        if ($app['session']->has('locale')) {
+            $locale = $app['session']->get('locale');
+        } else {
+            $locale = substr($request->server->get('HTTP_ACCEPT_LANGUAGE'), 0, 2);
+            $app['session']->set('locale', $locale);
+        }
+        $app['translator']->addResource('yaml', __DIR__.'/locales/'.$locale.'.yml', $locale);
+        $app['translator']->setLocale($locale);
+
         try {
             $req = new \Emercoin\Request('name_show', ['dpo:'.DPO_VENDOR]);
             $app['emercoin.dpo.vendor'] = new \Emercoin\Key($req->getData());
 
-	        $app->extend(
-	            'twig',
-	            function ($twig, $app) {
-	                $twig->addGlobal('ALLOWED_UPDATES', ALLOWED_UPDATES);
-	                $twig->addGlobal('EMERCOIN_DPO_VENDOR', $app['emercoin.dpo.vendor']);
-	                $twig->addGlobal('EMERCOIN_DPO_VENDOR_ID', DPO_VENDOR);
+            $app->extend(
+                'twig',
+                function ($twig, $app) {
+                    $twig->addGlobal('ALLOWED_UPDATES', ALLOWED_UPDATES);
+                    $twig->addGlobal('EMERCOIN_DPO_VENDOR', $app['emercoin.dpo.vendor']);
+                    $twig->addGlobal('EMERCOIN_DPO_VENDOR_ID', DPO_VENDOR);
 
-	                $twig->addGlobal('PHOTO',     PHOTO);
-	                $twig->addGlobal('SIGNATURE', SIGNATURE);
-	                $twig->addGlobal('COMMENT',   COMMENT);
-	                $twig->addGlobal('OWNER',     OWNER);
-	                $twig->addGlobal('SECRET',    SECRET);
-	                $twig->addGlobal('OTP',       OTP);
-	                $twig->addGlobal('UPDATED',   UPDATED);
-	                $twig->addGlobal('NAME',      NAME);
-	                $twig->addGlobal('ITEM',      ITEM);
-	                $twig->addGlobal('LOGO',      LOGO);
+                    $twig->addGlobal('PHOTO', PHOTO);
+                    $twig->addGlobal('SIGNATURE', SIGNATURE);
+                    $twig->addGlobal('COMMENT', COMMENT);
+                    $twig->addGlobal('OWNER', OWNER);
+                    $twig->addGlobal('SECRET', SECRET);
+                    $twig->addGlobal('OTP', OTP);
+                    $twig->addGlobal('UPDATED', UPDATED);
+                    $twig->addGlobal('NAME', NAME);
+                    $twig->addGlobal('ITEM', ITEM);
+                    $twig->addGlobal('LOGO', LOGO);
 
-	                return $twig;
-	            }
-	        );
+                    return $twig;
+                }
+            );
         } catch (\Emercoin\WalletConnectException $e) {
-        	throw new SettingsErrorHttpException();
+            throw new SettingsErrorHttpException();
         }
     }
 );
 
-$app->error(function (\SettingsErrorHttpException $e, Request $request, $code) use ($app) {
-    return $app['twig']->render('settings_error.twig', []);
-});
+$app->error(
+    function (\SettingsErrorHttpException $e, Request $request, $code) use ($app) {
+        return $app['twig']->render('settings_error.twig', []);
+    }
+);
 
 $app->get(
     '/',
@@ -82,8 +104,10 @@ $app->get(
 
         if ($key && $otp) {
             return $app->redirect($app['url_generator']->generate('show_key', ['key' => $key, 'otp' => $otp]));
-        } else if ($key) {
-            return $app->redirect($app['url_generator']->generate('show_key', ['key' => $key]));
+        } else {
+            if ($key) {
+                return $app->redirect($app['url_generator']->generate('show_key', ['key' => $key]));
+            }
         }
 
         return $app['twig']->render('index.twig', array());
@@ -91,13 +115,27 @@ $app->get(
 )->bind('_index_');
 
 $app->get(
+    '/setlocale/{locale}',
+    function (Silex\Application $app, $locale, Request $req) {
+
+        $app['translator']->setLocale($locale);
+        $app['session']->set('locale', $locale);
+        if($req->headers->get('referer')) {
+            return $app->redirect($req->headers->get('referer'));
+        } else {
+            throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
+        }
+    }
+)->bind('setlocale');;
+
+$app->get(
     '/check_key/{key}',
     function (Silex\Application $app, $key, Request $req) {
         $m = new Emercoin\Manager();
         $emcKey = $m->getKey($key);
 
- 	return var_export(isset($emcKey), true);
- 	//return isset($emcKey) ? 'true' : 'false';
+        return var_export(isset($emcKey), true);
+        //return isset($emcKey) ? 'true' : 'false';
     }
 )->bind('check_key');
 
@@ -108,14 +146,14 @@ $app->get(
         $emcKey = $m->getKey($key);
 
         if (!$emcKey) {
-            return $app['twig']->render('error.twig', ['error' => 'This key cannot be found']);
+            return $app['twig']->render('error.twig', ['error' => $app['translator']->trans('error.key_not_found')]);
         }
 
-	if ($emcKey->hasOTP() && !$emcKey->hasSecret() && $req->query->get('otp') !== null) {
-	    if (!$emcKey->compareOtp($req->query->get('otp'))) {
-    	        return $app['twig']->render('error.twig', ['error' => 'Wrong OTP']);
-	    }
-	}
+        if ($emcKey->hasOTP() && !$emcKey->hasSecret() && $req->query->get('otp') !== null) {
+            if (!$emcKey->compareOtp($req->query->get('otp'))) {
+                return $app['twig']->render('error.twig', ['error' => $app['translator']->trans('error.wrong_otp')]);
+            }
+        }
 
         $firstOwner = null;
         if ($emcKey->hasSecret()) {
@@ -146,7 +184,7 @@ $app->post(
         $emcKey = $m->getKey($key);
 
         if (!$emcKey) {
-            return $app['twig']->render('error.twig', ['error' => 'This key cannot be found']);
+            return $app['twig']->render('error.twig', ['error' => $app['translator']->trans('error.key_not_found')]);
         }
 
         $form = [
@@ -171,16 +209,26 @@ $app->post(
                         return $app['twig']->render('key_activated.twig', []);
                     }
 
-                    return $app['twig']->render('error.twig', ['error' => 'Something went wrong. Please wait for a while and try again.']);
+                    return $app['twig']->render(
+                        'error.twig',
+                        [
+                            'error' => $app['translator']->trans('error.smth_went_wrong'),
+                        ]
+                    );
                 }
 
-                return $app['twig']->render('error.twig', ['error' => 'Password mismatch']);
+                return $app['twig']->render(
+                    'error.twig',
+                    [
+                        'error' => $app['translator']->trans('error.password_mismatch'),
+                    ]
+                );
             }
 
-            return $app['twig']->render('error.twig', ['error' => 'Wrong OTP']);
+            return $app['twig']->render('error.twig', ['error' => $app['translator']->trans('error.wrong_otp')]);
         }
 
-        return $app['twig']->render('error.twig', ['error' => 'This action is forbidden']);
+        return $app['twig']->render('error.twig', ['error' => $app['translator']->trans('error.action_is_forbidden')]);
     }
 )->bind('activation');
 
@@ -190,7 +238,7 @@ $app->get(
         $m = new Emercoin\Manager();
         $emcKey = $m->getKey($key);
 
-        return $app['twig']->render('activate.twig', [ 'key' => $emcKey ]);
+        return $app['twig']->render('activate.twig', ['key' => $emcKey]);
     }
 )->bind('activate');
 
@@ -201,7 +249,7 @@ $app->post(
         $emcKey = $m->getKey($key);
 
         if (!$emcKey) {
-	    return $app['twig']->render('error.twig', ['error' => 'This key cannot be found']);
+            return $app['twig']->render('error.twig', ['error' => $app['translator']->trans('error.key_not_found')]);
         }
 
         $form = [
@@ -221,13 +269,18 @@ $app->post(
                     return $app['twig']->render('left_comment.twig', []);
                 }
 
-                return $app['twig']->render('error.twig', ['error' => 'Error occurred while saving data']);
+                return $app['twig']->render('error.twig', ['error' => $app['translator']->trans('error.while_saving')]);
             }
 
-            return $app['twig']->render('error.twig', ['error' => 'Wrong password or exceed limit of updates']);
+            return $app['twig']->render(
+                'error.twig',
+                [
+                    'error' => $app['translator']->trans('error.wrong_password_or_limit_exceed'),
+                ]
+            );
         }
 
-        return $app['twig']->render('error.twig', ['error' => 'This action is forbidden']);
+        return $app['twig']->render('error.twig', ['error' => $app['translator']->trans('error.action_is_forbidden')]);
     }
 )->bind('comment');
 
@@ -237,7 +290,11 @@ $app->get(
         $m = new Emercoin\Manager();
         $emcKey = $m->getKey($key);
 
-        return $app['twig']->render('comment.twig', [ 'key' => $emcKey ]);
+        if (!$emcKey) {
+            return $app['twig']->render('error.twig', ['error' => $app['translator']->trans('error.key_not_found')]);
+        }
+
+        return $app['twig']->render('comment.twig', ['key' => $emcKey]);
     }
 )->bind('leave_comment');
 
