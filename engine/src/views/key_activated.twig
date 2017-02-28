@@ -1,16 +1,21 @@
 {% extends 'base.twig' %}
 {% block body %}
 <body class="green-bg">
+<select class="cs-select cs-skin-underline">
+	<option value="" disabled selected>{{ global.session.get('locale')|upper }}</option>
+	<option data-link="{{ path('setlocale', {'locale': 'en'}) }}" value="en">EN</option>
+	<option data-link="{{ path('setlocale', {'locale': 'ru'}) }}" value="ru">RU</option>
+</select>
     <a href="{{ path('show_key', {key: global.request.get('key')}) }}">
-	    <div class="btn-back btn-back-panel white upper"><i class="material-icons">keyboard_backspace</i> back</div>
+	    <div class="btn-back btn-back-panel white upper"><i class="material-icons">keyboard_backspace</i> {{ 'global.back'|trans }}</div>
     </a>
 	<div class="one-column white message">
-		<h1><i class="material-icons">done</i> Success</h1>
-		<p>This item is in the process of activation now. It may take a short while for the item description to update (10-20 minutes).</p>
-		<p>After activation, the item description page will change its background color to blue, confirming it has been updated.</p>
-		<p>Thank you for your patience!</p>
+		<h1><i class="material-icons">done</i> {{ 'global.success'|trans }}</h1>
+		<p>{{ 'key_activated.line_one'|trans }}</p>
+		<p>{{ 'key_activated.line_two'|trans }}</p>
+		<p>{{ 'key_activated.line_three'|trans }}</p>
 		<a href="{{ path('show_key', {key: global.request.get('key')}) }}">
-		    <div class="btn btn-white-green upper btn-back">Go back</div>
+		    <div class="btn btn-white-green upper btn-back">{{ 'global.go_back'|trans }}</div>
 		</a>
 	</div>
 {% endblock %}

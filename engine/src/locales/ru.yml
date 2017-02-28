@@ -1,0 +1,97 @@
+global:
+    error: Ошибка
+    go_back: Go Back
+    back: Назад
+    warning: Warning
+    success: Успех
+    save: Сохранить
+
+index:
+    head:
+        digital_proof_of_ownership: Digital Proof-of-Ownership
+    error:
+        invalid_code:
+            message: Invalid code
+            description: It may be incorrect or corrupt. Try again or contact item vendor for support.
+
+    form:
+        code:
+            label: публичный ключ* (обязательно)
+        secret:
+            label: секретный код
+        submit:
+            label: Проверить запись
+
+key:
+    nav:
+        back: Back
+    head:
+        original_item: This is an original item
+        has_been_activated: This item was activated
+        activation_info: Activation info
+    message:
+        aware_sold: If you see this item being sold in stores as a new one - be awared, it's counterfeit!
+        comment_from_current_user: Comment from current owner
+    form:
+        date:
+            label: Date
+        time:
+            label: Time
+        user:
+            label: User
+        product_info:
+            label: Product info
+        serial:
+            label: Serial
+        nvs_record:
+            label: NVS Record
+        vendor_info:
+            label: Vendor info
+        name:
+            label: Name
+    action:
+        activate_item: Activate this item
+        view_product_info: View product info
+        view_vendor_info: View vendor info
+        are_you_owner: Are you current owner?
+
+error:
+    key_not_found: This key cannot be found
+    wrong_otp: Wrong OTP
+    smth_went_wrong: Something went wrong. Please wait for a while and try again.
+    password_mismatch: Password mismatch
+    action_is_forbidden: This action is forbidden
+    while_saving: Error occurred while saving data
+    wrong_password_or_limit_exceed: Wrong password or exceed limit of updates
+
+activate:
+    form:
+        create_your_password:
+            label: create your password
+        repeat_your_password:
+            label: repeat your password
+        your_name:
+            label: your name
+        your_comment:
+            label: your comment
+    action:
+        activate: Activate
+        activate_anyway: Activate anyway
+    message: Without creating a password you won't be able to change your comment in the future.
+
+comment:
+    head: You may change your comment (the old one will be overwritten)
+    form:
+        your_password:
+            label: Your password
+        your_comment:
+            label: Your comment
+key_activated:
+    line_one: This item is in the process of activation now. It may take a short while for the item description to update (10-20 minutes).
+    line_two: After activation, the item description page will change its background color to blue, confirming it has been updated.
+    line_three: Thank you for your patience!
+
+left_comment:
+    line_one: Your changes are applied. It may take a while for a modified content to get updated (10-20 minutes).
+    line_two: Thank you for your patience!
+settings_error: ~

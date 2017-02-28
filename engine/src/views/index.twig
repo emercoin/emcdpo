@@ -2,26 +2,34 @@
 
 {% block body %}
 <body class="">
-	<div class="one-column">
-		<div class="logo"></div>
-		<h1 class="pink upper">Emercoin</h1>
-		<h3 class="black upper">Digital Proof-of-Ownership</h3>
-		<div class="error black">
-			<h1><i class="material-icons">warning</i>Invalid code</h1>
-			<span>It may be incorrect or corrupt. Try again or contact item vendor for support.</span>
-		</div>
-		<form id="form-pubcode" novalidate action="{{ path('_index_') }}" method="get" autocomplete="off">
-			<div class="txt-input txt-pink">
-				<input type="text" name="key" id="public-code" required>
-				<span class="bar"></span>
-				<label class="upper">public code* (required)</label>
-			</div>
-			<div class="txt-input txt-pink">
-				<input type="text" name="otp" required>
-				<span class="bar"></span>
-				<label class="upper">Secret code</label>
-			</div>
-			<input class="btn btn-pink-inactive upper" id="submit" type="submit" disabled value="Check item">
-		</form>
-	</div>
+<select class="cs-select cs-skin-underline">
+    <option value="" disabled selected>{{ global.session.get('locale')|upper }}</option>
+    <option data-link="{{ path('setlocale', {'locale': 'en'}) }}" value="en">EN</option>
+    <option data-link="{{ path('setlocale', {'locale': 'ru'}) }}" value="ru">RU</option>
+</select>
+<div class="one-column">
+    <div class="logo"></div>
+    <h1 class="pink upper">Emercoin</h1>
+
+    <h3 class="black upper">{{ 'index.head.digital_proof_of_ownership'|trans }}</h3>
+
+    <div class="error black">
+        <h1><i class="material-icons">warning</i>{{ 'index.error.invalid_code.message'|trans }}</h1>
+        <span>{{ 'index.error.invalid_code.description'|trans }}</span>
+    </div>
+    <form id="form-pubcode" novalidate action="{{ path('_index_') }}" method="get" autocomplete="off">
+        <div class="txt-input txt-pink">
+            <input type="text" name="key" id="public-code" required>
+            <span class="bar"></span>
+            <label class="upper">{{ 'index.form.code.label'|trans }}</label>
+        </div>
+        <div class="txt-input txt-pink">
+            <input type="text" name="otp" required>
+            <span class="bar"></span>
+            <label class="upper">{{ 'index.form.secret.label'|trans }}</label>
+        </div>
+        <input class="btn btn-pink-inactive upper" id="submit" type="submit" disabled
+               value="{{ 'index.form.submit.label'|trans }}">
+    </form>
+</div>
 {% endblock body %}

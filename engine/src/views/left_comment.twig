@@ -2,16 +2,27 @@
 
 {% block body %}
 <body class="blue-bg">
+<select class="cs-select cs-skin-underline">
+    <option value="" disabled selected>{{ global.session.get('locale')|upper }}</option>
+    <option data-link="{{ path('setlocale', {'locale': 'en'}) }}" value="en">EN</option>
+    <option data-link="{{ path('setlocale', {'locale': 'ru'}) }}" value="ru">RU</option>
+</select>
+<a href="{{ path('show_key', {key: global.request.get('key')}) }}">
+    <div class="btn-back btn-back-panel white upper">
+        <i class="material-icons">keyboard_backspace</i>
+        {{ 'global.back'|trans }}
+    </div>
+</a>
+
+<div class="one-column white message">
+    <h1><i class="material-icons">done</i> {{ 'global.success'|trans }}</h1>
+
+    <p>{{ 'left_comment.line_one'|trans }}</p>
+
+    <p>{{ 'left_comment.line_two'|trans }}</p>
     <a href="{{ path('show_key', {key: global.request.get('key')}) }}">
-	    <div class="btn-back btn-back-panel white upper"><i class="material-icons">keyboard_backspace</i> back</div>
+        <div class="btn btn-white-blue upper btn-back">{{ 'global.go_back'|trans }}</div>
     </a>
-	<div class="one-column white message">
-		<h1><i class="material-icons">done</i> Success</h1>
-		<p>Your changes are applied. It may take a while for a modified content to get updated (10-20 minutes).</p>
-		<p>Thank you for your patience!</p>
-                <a href="{{ path('show_key', {key: global.request.get('key')}) }}">
-                    <div class="btn btn-white-blue upper btn-back">Go back</div>
-                </a>
-	</div>
+</div>
 {% endblock %}
 
