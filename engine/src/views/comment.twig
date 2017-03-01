@@ -4,8 +4,9 @@
 <body class="blue-bg mobile-paleblue-bg">
 <select class="cs-select cs-skin-underline">
     <option value="" disabled selected>{{ global.session.get('locale')|upper }}</option>
-    <option data-link="{{ path('setlocale', {'locale': 'en'}) }}" value="en">EN</option>
-    <option data-link="{{ path('setlocale', {'locale': 'ru'}) }}" value="ru">RU</option>
+    {% for locale in LOCALES %}
+        <option data-link="{{ path('setlocale', {'locale': locale}) }}" value="locale">{{ locale|upper }}</option>
+    {% endfor %}
 </select>
 <a href="{{ path('show_key', {key: global.request.get('key')}) }}">
     <div class="btn-back btn-back-panel white upper"><i class="material-icons">keyboard_backspace</i> {{ 'global.back'|trans }}</div>

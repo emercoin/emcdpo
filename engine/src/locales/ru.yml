@@ -13,7 +13,6 @@ index:
         invalid_code:
             message: Invalid code
             description: It may be incorrect or corrupt. Try again or contact item vendor for support.
-
     form:
         code:
             label: публичный ключ* (обязательно)
@@ -94,4 +93,7 @@ key_activated:
 left_comment:
     line_one: Your changes are applied. It may take a while for a modified content to get updated (10-20 minutes).
     line_two: Thank you for your patience!
-settings_error: ~
+
+settings_error:
+    head: Settings Error
+    message: Check your settings file located at
