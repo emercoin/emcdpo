@@ -4,8 +4,9 @@
 <body class="">
 <select class="cs-select cs-skin-underline">
     <option value="" disabled selected>{{ global.session.get('locale')|upper }}</option>
-    <option data-link="{{ path('setlocale', {'locale': 'en'}) }}" value="en">EN</option>
-    <option data-link="{{ path('setlocale', {'locale': 'ru'}) }}" value="ru">RU</option>
+    {% for locale in LOCALES %}
+        <option data-link="{{ path('setlocale', {'locale': locale}) }}" value="locale">{{ locale|upper }}</option>
+    {% endfor %}
 </select>
 <div class="one-column">
     <div class="logo"></div>

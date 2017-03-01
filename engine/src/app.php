@@ -49,6 +49,22 @@ class SettingsErrorHttpException extends \Symfony\Component\HttpKernel\Exception
 
 $app->before(
     function (Request $request) use ($app) {
+        $files = scandir(__DIR__.'/locales/', SCANDIR_SORT_ASCENDING);
+        $LOCALES = [];
+        foreach ($files as $file) {
+            if (is_file(__DIR__.'/locales/'.$file) && preg_match('/^.{2}\.yml$/', $file)) {
+                $LOCALES[] = substr($file, 0, 2);
+            }
+        }
+
+        $app->extend(
+            'twig',
+            function ($twig, $app) use ($LOCALES) {
+                $twig->addGlobal('LOCALES', $LOCALES);
+                return $twig;
+            }
+        );
+
         $locale = null;
         if ($app['session']->has('locale')) {
             $locale = $app['session']->get('locale');
@@ -120,7 +136,7 @@ $app->get(
 
         $app['translator']->setLocale($locale);
         $app['session']->set('locale', $locale);
-        if($req->headers->get('referer')) {
+        if ($req->headers->get('referer')) {
             return $app->redirect($req->headers->get('referer'));
         } else {
             throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
