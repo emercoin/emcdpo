@@ -11,57 +11,57 @@ index:
         digital_proof_of_ownership: Digital Proof-of-Ownership
     error:
         invalid_code:
-            message: Invalid code
-            description: It may be incorrect or corrupt. Try again or contact item vendor for support.
+            message: Incorrect serial number
+            description: Entry may be incorrect or corrupt. Try again or contact vendor for support.
     form:
         code:
-            label: public code* (required)
+            label: SERIAL NUMBER
         secret:
-            label: Secret code
+            label: SECRET CODE (OPTIONAL)
         submit:
-            label: Check item
+            label: Check product
 
 key:
     nav:
         back: Back
     head:
-        original_item: This is an original item
-        has_been_activated: This item was activated
-        activation_info: Activation info
+        original_item: This product is genuine
+        has_been_activated: This product was purchased
+        activation_info: Purchase information
     message:
-        aware_sold: If you see this item being sold in stores as a new one - be awared, it's counterfeit!
-        comment_from_current_user: Comment from current owner
+        aware_sold: This product was purchased. If you see it for sale elsewhere - it's probably a fake.
+        comment_from_current_user: Current owner's comment
     form:
         date:
             label: Date
         time:
             label: Time
         user:
-            label: User
+            label: Buyer (owner)
         product_info:
-            label: Product info
+            label: Product information
         serial:
-            label: Serial
+            label: Serial number
         nvs_record:
-            label: NVS Record
+            label: NVS record
         vendor_info:
-            label: Vendor info
+            label: Manufacturer information
         name:
-            label: Name
+            label: Product name
     action:
-        activate_item: Activate this item
-        view_product_info: View product info
-        view_vendor_info: View vendor info
+        activate_item: Purchase registration
+        view_product_info: View product information
+        view_vendor_info: View manufacturer information
         are_you_owner: Are you current owner?
 
 error:
-    key_not_found: This key cannot be found
-    wrong_otp: Wrong OTP
-    smth_went_wrong: Something went wrong. Please wait for a while and try again.
+    key_not_found: Wrong serial number
+    wrong_otp: Wrong secret code
+    smth_went_wrong: Something went wrong. Please wait a while and try again.
     password_mismatch: Password mismatch
     action_is_forbidden: This action is forbidden
     while_saving: Error occurred while saving data
-    wrong_password_or_limit_exceed: Wrong password or exceed limit of updates
+    wrong_password_or_limit_exceed: Wrong password or update limit exceeded
 
 activate:
     form:
@@ -70,28 +70,29 @@ activate:
         repeat_your_password:
             label: repeat your password
         your_name:
-            label: your name
+            label: Your name
         your_comment:
-            label: your comment
+            label: Comment (can be added later)
     action:
-        activate: Activate
-        activate_anyway: Activate anyway
-    message: Without creating a password you won't be able to change your comment in the future.
+        activate: Register my purchase
+        activate_anyway: Register my purchase anyway
+    message: Without creating a password you won't be able to control the product's record (for example: changing the product comment) in the future.
 
 comment:
-    head: You may change your comment (the old one will be overwritten)
+    head: You may change your comment (the existing comment will be overwritten)
     form:
         your_password:
             label: Your password
         your_comment:
-            label: Your comment
+            label: Comment
+
 key_activated:
-    line_one: This item is in the process of activation now. It may take a short while for the item description to update (10-20 minutes).
-    line_two: After activation, the item description page will change its background color to blue, confirming it has been updated.
+    line_one: Purchase registration is now processing. It may take a short while for the product description to update (approximately 10-20 minutes).
+    line_two: After purchase registration the product description page will change its background color to blue, confirming it has been updated.
     line_three: Thank you for your patience!
 
 left_comment:
-    line_one: Your changes are applied. It may take a while for a modified content to get updated (10-20 minutes).
+    line_one: Your changes have been applied. It may take a short while for modified content to get updated (approximately 10-20 minutes).
     line_two: Thank you for your patience!
 
 settings_error:

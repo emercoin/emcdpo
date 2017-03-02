@@ -1,6 +1,6 @@
 <?php
 
-CONST IN_DEBUG_MODE = true;
+CONST IN_DEBUG_MODE = false;
 
 // General Settings
 CONST DPO_VENDOR = 'DPO VENDOR NAME';

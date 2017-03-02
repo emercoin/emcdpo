@@ -1,0 +1,100 @@
+global:
+    error: 错误
+    go_back: 返回
+    back: 返回
+    warning: 警告
+    success: 成功
+    save: 保存
+
+index:
+    head:
+        digital_proof_of_ownership: 数字所有权认证
+    error:
+        invalid_code:
+            message: 无效序列号
+            description: 它可能错误或已被损坏，请重试或者联系经销商寻求支持.
+    form:
+        code:
+            label: 公众码
+        secret:
+            label: 私匙（可选择的）
+        submit:
+            label: 核查产品
+
+key:
+    nav:
+        back: 返回
+    head:
+        original_item: 正品已验证
+        has_been_activated: 该产品已被购买
+        activation_info: 购买信息
+    message:
+        aware_sold: 该品已被采购，如在其他地方发现出售，极可能是伪造！
+        comment_from_current_user: 当前用户评价
+    form:
+        date:
+            label: 日期
+        time:
+            label: 时间
+        user:
+            label: 买主（用户）
+        product_info:
+            label: 产品信息
+        serial:
+            label: 序列号
+        nvs_record:
+            label: NVS记录
+        vendor_info:
+            label: 制造商信息
+        name:
+            label: 产品名称
+    action:
+        activate_item: 购买注册
+        view_product_info: 查阅产品信息
+        view_vendor_info: 查阅制造商信息
+        are_you_owner: 您是当前用户吗？
+
+error:
+    key_not_found: 错误的序列号
+    wrong_otp: 错误的私匙
+    smth_went_wrong: 运行错误，请稍后进行重试。
+    password_mismatch: 密码错误
+    action_is_forbidden: 该动作被禁止
+    while_saving: 保存数据发生错误
+    wrong_password_or_limit_exceed: 密码错误或超出更新限制
+
+activate:
+    form:
+        create_your_password:
+            label: 创建你的密码
+        repeat_your_password:
+            label: 重复你的密码
+        your_name:
+            label: 您的姓名
+        your_comment:
+            label: 评价（可以稍后填写）
+    action:
+        activate: 注册购买
+        activate_anyway: 仍然注册购买
+    message: 不创建密码将来会无法管控产品记录(如更改评价).
+
+comment:
+    head: 你可更改您的评价（老评价将会被替换）
+    form:
+        your_password:
+            label: 你的密码
+        your_comment:
+            label: 您的评价
+
+key_activated:
+    line_one: 购买和注册正在进行中，需要短暂时间对产品描述进行更新。
+    line_two: 购买和注册产品后产品描述页面背景会改变为蓝色，以确认它已经被更新。
+    line_three: 谢谢您的耐心！
+
+left_comment:
+    line_one: 您的更改已经生效，现在需要一段时间更改内容并进行升级（10-20分钟）。
+    line_two: 谢谢您的耐心！
+
+settings_error:
+    head: 设置错误
+    message: 检查您的本地文件设置

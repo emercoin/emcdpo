@@ -1,99 +1,100 @@
 global:
     error: Ошибка
-    go_back: Go Back
+    go_back: Вернуться назад
     back: Назад
-    warning: Warning
-    success: Успех
+    warning: Предупреждение
+    success: Готово!
     save: Сохранить
 
 index:
     head:
-        digital_proof_of_ownership: Digital Proof-of-Ownership
+        digital_proof_of_ownership: Цифровое доказательство владения
     error:
         invalid_code:
-            message: Invalid code
-            description: It may be incorrect or corrupt. Try again or contact item vendor for support.
+            message: Неправильный серийный номер
+            description: Он может быть повержден или ошибочен. Попробуйте снова или свяжитесь с производителем товара.
     form:
         code:
-            label: публичный ключ* (обязательно)
+            label: СЕРИЙНЫЙ НОМЕР
         secret:
-            label: секретный код
+            label: СЕКРЕТНЫЙ КОД (ЕСЛИ ЕСТЬ)
         submit:
-            label: Проверить запись
+            label: Проверить товар
 
 key:
     nav:
-        back: Back
+        back: Назад
     head:
-        original_item: This is an original item
-        has_been_activated: This item was activated
-        activation_info: Activation info
+        original_item: Это подлинный товар
+        has_been_activated: Этот товар был куплен
+        activation_info: Информация о покупке
     message:
-        aware_sold: If you see this item being sold in stores as a new one - be awared, it's counterfeit!
-        comment_from_current_user: Comment from current owner
+        aware_sold: Этот товар был приобретен. Если вы видите его в продаже - возможно, это подделка.
+        comment_from_current_user: Отзыв текущего владельца
     form:
         date:
-            label: Date
+            label: Дата покупки
         time:
-            label: Time
+            label: Время
         user:
-            label: User
+            label: Покупатель (владелец)
         product_info:
-            label: Product info
+            label: Информация о товаре
         serial:
-            label: Serial
+            label: Серийный номер
         nvs_record:
-            label: NVS Record
+            label: Запись NVS
         vendor_info:
-            label: Vendor info
+            label: Информация о производителе
         name:
-            label: Name
+            label: Наименование продукта
     action:
-        activate_item: Activate this item
-        view_product_info: View product info
-        view_vendor_info: View vendor info
-        are_you_owner: Are you current owner?
+        activate_item: Регистрация покупки
+        view_product_info: Информация о товаре
+        view_vendor_info: Информация о производителе
+        are_you_owner: Вы - владелец товара?
 
 error:
-    key_not_found: This key cannot be found
-    wrong_otp: Wrong OTP
-    smth_went_wrong: Something went wrong. Please wait for a while and try again.
-    password_mismatch: Password mismatch
-    action_is_forbidden: This action is forbidden
-    while_saving: Error occurred while saving data
-    wrong_password_or_limit_exceed: Wrong password or exceed limit of updates
+    key_not_found: Неправильный серийный номер
+    wrong_otp: Неправильный секретный код
+    smth_went_wrong: Что-то пошло не так. Пожалуйста, попробуйте через некоторое время.
+    password_mismatch: Пароли не совпадают
+    action_is_forbidden: Эта операция запрещена
+    while_saving: Во время сохранения данных произошла ошибка
+    wrong_password_or_limit_exceed: Неверный пароль или достигнут лимит изменений комментария
 
 activate:
     form:
         create_your_password:
-            label: create your password
+            label: Придумайте Ваш пароль
         repeat_your_password:
-            label: repeat your password
+            label: Повторите Ваш пароль
         your_name:
-            label: your name
+            label: Ваше имя
         your_comment:
-            label: your comment
+            label: Комментарий (можно заполнить позже)
     action:
-        activate: Activate
-        activate_anyway: Activate anyway
-    message: Without creating a password you won't be able to change your comment in the future.
+        activate: Зарегистрировать покупку
+        activate_anyway: Все равно зарегистрировать покупку
+    message: Если Вы не зададите пароль, Вы не сможете управлять товаром в будущем (например, изменять комментарий)
 
 comment:
-    head: You may change your comment (the old one will be overwritten)
+    head: Вы можете изменить комментарий (старый будет перезаписан)
     form:
         your_password:
-            label: Your password
+            label: Ваш пароль
         your_comment:
-            label: Your comment
+            label: Комментарий
+
 key_activated:
-    line_one: This item is in the process of activation now. It may take a short while for the item description to update (10-20 minutes).
-    line_two: After activation, the item description page will change its background color to blue, confirming it has been updated.
-    line_three: Thank you for your patience!
+    line_one: Сейчас происходит регистрация покупки в блокчейне. Это может потребовать некоторого времени (10-20 минут)
+    line_two: После регистрации покупки цвет фона страницы изменится с зеленого на синий, подтверждая, что товар был продан.
+    line_three: Спасибо Вам за терпение!
 
 left_comment:
-    line_one: Your changes are applied. It may take a while for a modified content to get updated (10-20 minutes).
-    line_two: Thank you for your patience!
+    line_one: Ваши изменения сохраняются. Может потребоваться некоторое время для регистрации их в блокчейне (10-20 минут)
+    line_two: Спасибо Вам за терпение!
 
 settings_error:
-    head: Settings Error
-    message: Check your settings file located at
+    head: Ошибка настроек
+    message: Проверьте ваш файл настроек
