@@ -76,7 +76,7 @@ activate:
     action:
         activate: Register my purchase
         activate_anyway: Register my purchase anyway
-    message: Without creating a password you won't be able to control the product's record (for example: changing the product comment) in the future.
+    message: Without creating a password you won't be able to control the product's record (for example, changing the product comment) in the future.
 
 comment:
     head: You may change your comment (the existing comment will be overwritten)
